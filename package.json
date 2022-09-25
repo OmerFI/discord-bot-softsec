@@ -1,0 +1,21 @@
+{
+  "name": "softsec-discord-bot",
+  "version": "1.0.0",
+  "description": "SoftSec Discord Bot",
+  "main": "index.js",
+  "author": "Omer Furkan Isleyen",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.4.0",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.24.0",
+    "nodemon": "^2.0.20"
+  }
+}
