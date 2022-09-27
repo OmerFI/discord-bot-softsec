@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { REST, Routes } = require("discord.js");
 
-const { CLIENT_ID, DISCORD_TOKEN } = process.env;
+const { DISCORD_CLIENT_ID, DISCORD_TOKEN } = process.env;
 
 console.log("Starting deploy-commands.js");
 
@@ -22,7 +22,7 @@ for (const file of commandFiles) {
 const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
 
 rest
-  .put(Routes.applicationCommands(CLIENT_ID), { body: commands })
+  .put(Routes.applicationCommands(DISCORD_CLIENT_ID), { body: commands })
   .then((data) =>
     console.log(`Successfully registered ${data.length} application commands.`)
   )
