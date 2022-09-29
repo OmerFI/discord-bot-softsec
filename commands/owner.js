@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const OWNER_DISCORD_ID = "176255024152838144";
 
@@ -12,32 +12,27 @@ module.exports = {
       .get(OWNER_DISCORD_ID)
       .avatarURL();
 
-    // create the embed with the owner info
-    const embed = {
-      color: 0x0099ff,
-      title: "Yapımcı",
-      description: `<@${OWNER_DISCORD_ID}>`,
-      fields: [
+    const embed = new EmbedBuilder()
+      .setAuthor({ name: "Yapımcı", iconURL: avatarURL })
+      .setColor(0x0099ff)
+      .setDescription(`Merhaba Ben Ömer 👋🏻 <@${OWNER_DISCORD_ID}>`)
+      .setThumbnail(avatarURL)
+      .addFields(
         {
           name: "Portfolyo",
           value: "https://omerfi.github.io",
-          inline: true,
         },
         {
           name: "GitHub",
           value: "https://github.com/OmerFI",
-          inline: true,
-        },
-      ],
-      timestamp: new Date(),
-      thumbnail: {
-        url: avatarURL,
-      },
-    };
+        }
+      )
+      .setTimestamp()
+      .setFooter({
+        text: interaction.user.tag,
+        iconURL: interaction.user.displayAvatarURL(),
+      });
 
     await interaction.reply({ embeds: [embed] });
-    // await interaction.reply(
-    //   `<@${OWNER_DISCORD_ID}> tarafından geliştirilmiştir.`
-    // );
   },
 };
