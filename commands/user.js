@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,10 +15,13 @@ module.exports = {
   async execute(interaction) {
     const user = interaction.options.getUser("user") || interaction.user;
     const member = interaction.guild.members.cache.get(user.id);
+
+    // create roles with the most important roles first
     const roles = member.roles.cache
-      .filter((role) => role.id !== interaction.guild.id)
+      .sort((a, b) => b.position - a.position)
       .map((role) => role.toString())
-      .join(", ");
+      .slice(0, -1)
+      .join(" ");
 
     // format the roles string if there are more than 10 roles
     const rolesString =
@@ -28,38 +31,43 @@ module.exports = {
           : roles.slice(0, 1021) + "..."
         : roles;
 
-    // create the embed with the user's info
-    const embed = {
-      color: 0x0099ff,
-      title: `${user.username}#${user.discriminator}`,
-      thumbnail: {
-        url: user.displayAvatarURL(),
-      },
-      fields: [
+    // get role's color
+    const color =
+      member.displayHexColor === "#000000" ? "#ffffff" : member.displayHexColor;
+
+    const embed = new EmbedBuilder()
+      .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
+      .setColor(color)
+      .setDescription(`<@${user.id}>`)
+      .setThumbnail(user.displayAvatarURL())
+      .addFields(
+        { name: "Kullanıcı Adı", value: user.username, inline: true },
+        { name: "Discriminator", value: user.discriminator, inline: true },
+        { name: "ID", value: user.id, inline: true },
+        { name: "Bot mu?", value: user.bot ? "Evet" : "Hayır", inline: true },
         {
-          name: "ID",
-          value: user.id,
-          inline: true,
-        },
-        {
-          name: "Sunucuya Katılma Tarihi",
-          value: new Date(member.joinedTimestamp).toLocaleDateString(),
-          inline: true,
-        },
-        {
-          name: "Hesap Oluşturulma Tarihi",
+          name: "Oluşturulma Tarihi",
           value: new Date(user.createdTimestamp).toLocaleDateString(),
           inline: true,
         },
-      ],
-      timestamp: new Date(),
-    };
+        {
+          name: "Katılma Tarihi",
+          value: new Date(member.joinedTimestamp).toLocaleDateString(),
+          inline: true,
+        }
+      )
+      .setTimestamp()
+      .setFooter({
+        text: interaction.user.tag,
+        iconURL: interaction.user.displayAvatarURL(),
+      });
 
     // Add roles if there are any
     if (roles) {
-      embed.fields.push({
+      embed.addFields({
         name: `Roller [${member.roles.cache.size - 1}]`,
         value: rolesString,
+        inline: true,
       });
     }
 
